@@ -247,20 +247,14 @@ export function FormScreen({
           color: var(--color-text-primary);
           border: none;
           border-bottom: 1px solid var(--color-text-primary);
-          padding: 8px 0;
+          padding: 0;
           background-color: transparent;
           font-family: var(--font-body);
           transition: border-color 0.2s ease;
-        }
-
-        textarea {
-          height: 20px;
-          overflow: hidden;
-          resize: none;
-          line-height: 1;
-          padding-top: 0;
-          padding-bottom: 0;
-          margin: 0;
+          line-height: 1.5;
+          height: 24px;
+          display: block;
+          vertical-align: bottom;
         }
 
         input:focus, textarea:focus, select:focus {
@@ -270,6 +264,11 @@ export function FormScreen({
 
         input::placeholder, textarea::placeholder {
           color: var(--color-text-light);
+        }
+
+        textarea {
+          overflow: hidden;
+          resize: none;
         }
 
         .button-group {
