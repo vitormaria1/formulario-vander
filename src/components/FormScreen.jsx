@@ -10,11 +10,6 @@ export function FormScreen({
   error,
   isLastQuestion,
 }) {
-  const handleTextareaChange = (e) => {
-    onChangeValue(e.target.value);
-    e.target.style.height = 'auto';
-    e.target.style.height = e.target.scrollHeight + 'px';
-  };
 
   const formatPhoneInput = (val) => {
     const digits = val.replace(/\D/g, '');
@@ -132,7 +127,7 @@ export function FormScreen({
         return (
           <textarea
             value={value || ''}
-            onChange={handleTextareaChange}
+            onChange={e => onChangeValue(e.target.value)}
             autoFocus
           />
         );
