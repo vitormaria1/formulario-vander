@@ -254,9 +254,10 @@ export function FormScreen({
         }
 
         textarea {
-          height: auto;
+          height: 20px;
           overflow: hidden;
           resize: none;
+          line-height: 1;
         }
 
         input:focus, textarea:focus, select:focus {
