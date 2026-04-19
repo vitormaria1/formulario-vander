@@ -127,7 +127,6 @@ export function FormScreen({
           <textarea
             value={value || ''}
             onChange={e => onChangeValue(e.target.value)}
-            rows="3"
             autoFocus
           />
         );
@@ -246,6 +245,11 @@ export function FormScreen({
           background-color: transparent;
           font-family: var(--font-body);
           transition: border-color 0.2s ease;
+        }
+
+        textarea {
+          min-height: 60px;
+          resize: vertical;
         }
 
         input:focus, textarea:focus, select:focus {
