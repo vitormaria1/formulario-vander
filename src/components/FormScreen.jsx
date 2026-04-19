@@ -248,7 +248,7 @@ export function FormScreen({
         }
 
         textarea {
-          min-height: 60px;
+          min-height: 24px;
           resize: vertical;
         }
 
