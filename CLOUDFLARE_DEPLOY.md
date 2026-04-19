@@ -1,35 +1,43 @@
 # 🚀 Deploy no Cloudflare Pages
 
-## Opção 1: Deploy Direto do GitHub (Recomendado)
+## ⭐ Opção 1: Deploy Direto do GitHub (RECOMENDADO - Auto-Deploy)
 
 ### 1. Conectar Repositório
-```bash
-# Acesse https://dash.cloudflare.com/
-# Vá em Pages → Create a project → Connect to Git
-# Selecione: vitormaria1/formulario-vander
+```
+https://dash.cloudflare.com/
+→ Pages → Create a project → Connect to Git
+→ Selecionar: vitormaria1/formulario-vander
 ```
 
-### 2. Configurar Build
+### 2. Configurar Build Settings
 - **Project name:** formulario-vander
 - **Production branch:** main
 - **Build command:** npm run build
 - **Build output directory:** dist
 
-### 3. Environment Variables
-Adicionar em Settings → Environment variables:
+### 3. Adicionar Environment Variables
 ```
+Settings → Environment variables → Production
+
+Adicionar 3 variáveis:
 VITE_UAZAPI_BASE_URL=https://varia.uazapi.com
 VITE_UAZAPI_TOKEN=dfe5c844-a39e-4ab6-9223-dcf40b442e1d
 VITE_WHATSAPP_DESTINATION=554899298643
 ```
 
-### 4. Deploy
+### 4. Deploy Automático
 - Clique em "Save and Deploy"
-- Cloudflare automaticamente fará build e deploy
+- Cloudflare automaticamente:
+  1. Clona repo do GitHub
+  2. Instala dependências
+  3. Roda `npm run build`
+  4. Faz deploy de `dist/`
+
+✅ **Vantagem:** A cada push em main, redeploy automático!
 
 ---
 
-## Opção 2: Deploy Manual (Sem GitHub)
+## 📦 Opção 2: Upload Manual via CLI
 
 ### 1. Build Local
 ```bash
@@ -41,7 +49,7 @@ npm run build
 npm install -g wrangler
 ```
 
-### 3. Autenticar com Cloudflare
+### 3. Login no Cloudflare
 ```bash
 wrangler login
 # Abre navegador para autenticar
@@ -50,30 +58,44 @@ wrangler login
 ### 4. Deploy
 ```bash
 wrangler pages deploy dist
+# Pronto! Vai gerar URL do deploy
 ```
 
 ---
 
-## Opção 3: Upload Manual via Dashboard
+## 🖱️ Opção 3: Upload Manual via Dashboard (Mais Simples)
 
-### 1. Build
+### 1. Build Localmente
 ```bash
 npm run build
 ```
 
-### 2. Acessar Cloudflare
-- https://dash.cloudflare.com/
-- Pages → Create project → Upload static site
-- Selecionar pasta `dist/`
-- Nomear projeto: `formulario-vander`
-
-### 3. Configurar Variáveis
-Settings → Environment variables → Production:
+### 2. Acessar Cloudflare Dashboard
 ```
+https://dash.cloudflare.com/
+→ Pages → Create project → Upload static site
+```
+
+### 3. Fazer Upload
+- Arrastar pasta `dist/` para upload
+- OU clicar para selecionar
+
+### 4. Nomear Projeto
+- **Project name:** formulario-vander
+- Save
+
+### 5. Configurar Variáveis de Ambiente
+```
+Settings → Environment variables → Production
+
 VITE_UAZAPI_BASE_URL=https://varia.uazapi.com
 VITE_UAZAPI_TOKEN=dfe5c844-a39e-4ab6-9223-dcf40b442e1d
 VITE_WHATSAPP_DESTINATION=554899298643
 ```
+
+### 6. Redeploy
+- Clique em "Redeploy"
+- Pronto!
 
 ---
 
