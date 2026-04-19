@@ -10,6 +10,12 @@ export function FormScreen({
   error,
   isLastQuestion,
 }) {
+  const handleTextareaChange = (e) => {
+    onChangeValue(e.target.value);
+    e.target.style.height = 'auto';
+    e.target.style.height = e.target.scrollHeight + 'px';
+  };
+
   const formatPhoneInput = (val) => {
     const digits = val.replace(/\D/g, '');
     if (digits.length <= 2) return digits;
@@ -126,7 +132,7 @@ export function FormScreen({
         return (
           <textarea
             value={value || ''}
-            onChange={e => onChangeValue(e.target.value)}
+            onChange={handleTextareaChange}
             autoFocus
           />
         );
@@ -248,8 +254,9 @@ export function FormScreen({
         }
 
         textarea {
-          min-height: 24px;
-          resize: vertical;
+          height: auto;
+          overflow: hidden;
+          resize: none;
         }
 
         input:focus, textarea:focus, select:focus {
