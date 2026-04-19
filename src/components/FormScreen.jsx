@@ -127,7 +127,7 @@ export function FormScreen({
           <textarea
             value={value || ''}
             onChange={e => onChangeValue(e.target.value)}
-            rows="5"
+            rows="3"
             autoFocus
           />
         );
