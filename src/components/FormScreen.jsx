@@ -258,6 +258,9 @@ export function FormScreen({
           overflow: hidden;
           resize: none;
           line-height: 1;
+          padding-top: 0;
+          padding-bottom: 0;
+          margin: 0;
         }
 
         input:focus, textarea:focus, select:focus {
