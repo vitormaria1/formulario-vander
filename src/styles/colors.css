@@ -1,0 +1,30 @@
+:root {
+  --color-background: #F4F0E8;
+  --color-text-primary: #1A1A1A;
+  --color-accent: #7A1C1C;
+  --color-text-light: #666666;
+  --color-border: #CCCCCC;
+  --color-error: #C41E3A;
+
+  --font-title: 'Bebas Neue', sans-serif;
+  --font-body: 'Inter', sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  font-family: var(--font-body);
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  line-height: 1.6;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
