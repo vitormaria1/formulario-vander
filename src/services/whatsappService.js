@@ -106,4 +106,36 @@ export async function sendFormDataToWhatsApp(formData, phoneDestination) {
   return response.json();
 }
 
+export async function sendFormDataWithFallback(formData, phoneDestination, emailDestination) {
+  const { sendFormDataViaEmail } = await import('./emailService.js');
+
+  try {
+    // Tenta WhatsApp primeiro
+    const whatsappResult = await sendFormDataToWhatsApp(formData, phoneDestination);
+    console.log('WhatsApp enviado com sucesso:', whatsappResult);
+    return {
+      success: true,
+      method: 'whatsapp',
+      data: whatsappResult,
+    };
+  } catch (whatsappError) {
+    console.error('WhatsApp falhou, tentando email como fallback:', whatsappError);
+
+    try {
+      // Fallback: tenta email
+      const emailResult = await sendFormDataViaEmail(formData, emailDestination);
+      console.log('Email enviado com sucesso (fallback):', emailResult);
+      return {
+        success: true,
+        method: 'email',
+        data: emailResult,
+      };
+    } catch (emailError) {
+      console.error('Email também falhou:', emailError);
+      // Ambos falharam - no frontend não mostrar erro, apenas log
+      throw new Error('Todos os métodos de envio falharam');
+    }
+  }
+}
+
 export { formatFormMessage, normalizePhoneNumber };
