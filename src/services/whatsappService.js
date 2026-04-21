@@ -106,13 +106,111 @@ export async function sendFormDataToWhatsApp(formData, phoneDestination) {
   return response.json();
 }
 
+export async function checkWhatsAppNumber(phone) {
+  const token = '5c81a955-e8c3-4d56-9577-557776fa3dd4';
+  const baseUrl = 'https://varia.uazapi.com';
+
+  const phoneNormalized = normalizePhoneNumber(phone);
+  if (!phoneNormalized) {
+    return { valid: false, error: 'Número inválido' };
+  }
+
+  try {
+    const response = await fetch(`${baseUrl}/chat/check`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'token': token,
+      },
+      body: JSON.stringify({
+        numbers: [phoneNormalized],
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Erro ao verificar: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (data.invalid && data.invalid.length > 0) {
+      return { valid: false, error: 'WhatsApp não encontrado' };
+    }
+
+    if (data.valid && data.valid.length > 0) {
+      return { valid: true, message: 'WhatsApp verificado' };
+    }
+
+    return { valid: false, error: 'Não foi possível verificar' };
+  } catch (err) {
+    console.error('Erro ao verificar WhatsApp:', err);
+    return { valid: false, error: err.message };
+  }
+}
+
+export async function sendClientWelcomeMessage(phone, name) {
+  const token = '5c81a955-e8c3-4d56-9577-557776fa3dd4';
+  const baseUrl = 'https://varia.uazapi.com';
+
+  const phoneNormalized = normalizePhoneNumber(phone);
+  if (!phoneNormalized) {
+    throw new Error('Número de telefone inválido');
+  }
+
+  const firstName = name.split(' ')[0];
+
+  const message = `Bom dia, ${firstName}! Tudo bem com você?
+
+Aqui é o *Vander Maria. Terapeuta de casais.*
+
+Vi que você preencheu o formulário da pré-sessão. Obrigado por confiar no meu trabalho e dar esse passo.
+
+Para alinharmos com clareza, qual é a sua disponibilidade para fazermos a pré-consulta? Você consegue essa semana? Se sim, em quais horários você fica livre?
+
+*Fico no aguardo de sua resposta!*`;
+
+  try {
+    const response = await fetch(`${baseUrl}/send/text`, {
+      method: 'POST',
+      headers: {
+        'token': token,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        number: phoneNormalized,
+        text: message,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.text();
+      throw new Error(`Erro ao enviar: ${response.status} - ${errorData}`);
+    }
+
+    return response.json();
+  } catch (err) {
+    console.error('Erro ao enviar mensagem ao cliente:', err);
+    throw err;
+  }
+}
+
 export async function sendFormDataWithFallback(formData, phoneDestination, emailDestination) {
   const { saveFormToQueue } = await import('./queueService.js');
 
   try {
-    // Tenta WhatsApp primeiro
+    // Tenta WhatsApp para Vander primeiro
     const whatsappResult = await sendFormDataToWhatsApp(formData, phoneDestination);
-    console.log('WhatsApp enviado com sucesso:', whatsappResult);
+    console.log('WhatsApp enviado para Vander:', whatsappResult);
+
+    // Após sucesso para Vander, envia mensagem de boas-vindas para o cliente
+    try {
+      await sendClientWelcomeMessage(formData.phone, formData.name);
+      console.log('Mensagem de boas-vindas enviada ao cliente');
+    } catch (clientErr) {
+      console.warn('Falha ao enviar mensagem ao cliente, mas formulário foi recebido:', clientErr);
+    }
+
     return {
       success: true,
       method: 'whatsapp',

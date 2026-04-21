@@ -1,3 +1,6 @@
+import { checkWhatsAppNumber } from '../services/whatsappService.js';
+import { useState } from 'react';
+
 export function FormScreen({
   questionNumber,
   totalQuestions,
@@ -10,6 +13,8 @@ export function FormScreen({
   error,
   isLastQuestion,
 }) {
+  const [whatsappValidation, setWhatsappValidation] = useState(null);
+  const [validatingPhone, setValidatingPhone] = useState(false);
 
   const formatPhoneInput = (val) => {
     const digits = val.replace(/\D/g, '');
@@ -21,6 +26,23 @@ export function FormScreen({
   const handlePhoneChange = (e) => {
     const formatted = formatPhoneInput(e.target.value);
     onChangeValue(formatted);
+  };
+
+  const handlePhoneBlur = async (e) => {
+    if (question.id === 'phone' && value) {
+      const cleanPhone = value.replace(/\D/g, '');
+      if (cleanPhone.length >= 10) {
+        setValidatingPhone(true);
+        try {
+          const result = await checkWhatsAppNumber(value);
+          setWhatsappValidation(result);
+        } catch (err) {
+          setWhatsappValidation({ valid: false, error: 'Erro ao verificar WhatsApp' });
+        } finally {
+          setValidatingPhone(false);
+        }
+      }
+    }
   };
 
   const canAdvance = () => {
@@ -79,6 +101,7 @@ export function FormScreen({
             type="text"
             value={value || ''}
             onChange={handlePhoneChange}
+            onBlur={handlePhoneBlur}
             onKeyPress={handleKeyPress}
             placeholder="(11) 99999-9999"
             maxLength="15"
@@ -159,6 +182,14 @@ export function FormScreen({
           <div className="input-wrapper">
             {renderInput()}
             {error && <span className="error-message">{error}</span>}
+            {validatingPhone && question.id === 'phone' && (
+              <span className="validating-message">Verificando WhatsApp...</span>
+            )}
+            {whatsappValidation && question.id === 'phone' && !validatingPhone && (
+              <span className={`validation-message ${whatsappValidation.valid ? 'valid' : 'invalid'}`}>
+                {whatsappValidation.valid ? '✓ WhatsApp verificado' : `✗ ${whatsappValidation.error}`}
+              </span>
+            )}
           </div>
         </div>
 
@@ -315,6 +346,27 @@ export function FormScreen({
           color: var(--color-error);
           font-size: 14px;
           margin-top: 4px;
+        }
+
+        .validating-message {
+          color: var(--color-text-light);
+          font-size: 13px;
+          margin-top: 4px;
+          font-style: italic;
+        }
+
+        .validation-message {
+          font-size: 13px;
+          margin-top: 4px;
+          font-weight: 600;
+        }
+
+        .validation-message.valid {
+          color: var(--color-success);
+        }
+
+        .validation-message.invalid {
+          color: var(--color-error);
         }
 
         .loading-spinner {
