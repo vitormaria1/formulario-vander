@@ -160,7 +160,7 @@ export async function sendClientWelcomeMessage(phone, name) {
 
   const firstName = name.split(' ')[0];
 
-  const message = `Bom dia, ${firstName}! Tudo bem com você?
+  const message = `Olá, ${firstName}! Tudo bem com você?
 
 Aqui é o *Vander Maria. Terapeuta de casais.*
 
