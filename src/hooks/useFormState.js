@@ -10,7 +10,7 @@ const QUESTIONS = [
   { id: 'religion', label: 'Religião', type: 'text', required: true },
   { id: 'maritalStatus', label: 'Estado civil', type: 'select', required: true, options: ['Solteiro(a)', 'Casado(a)', 'Divorciado(a)', 'Viúvo(a)', 'Prefiro não informar'] },
   { id: 'profession', label: 'Profissão', type: 'text', required: true },
-  { id: 'income', label: 'Renda média', type: 'select', required: true, options: ['Menos de R$ 1.000', 'R$ 1.000 - R$ 3.000', 'R$ 3.000 - R$ 5.000', 'Mais de R$ 5.000'] },
+  { id: 'income', label: 'Renda média', type: 'number', required: false },
   { id: 'therapyHistory', label: 'Já fez terapia? Se sim, por quanto tempo?', type: 'textarea', required: true },
   { id: 'diagnosis', label: 'Já recebeu algum diagnóstico?', type: 'textarea', required: true },
   { id: 'medication', label: 'Toma alguma medicação? Se sim, qual e em qual dosagem?', type: 'textarea', required: true },

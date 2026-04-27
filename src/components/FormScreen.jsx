@@ -28,6 +28,18 @@ export function FormScreen({
     onChangeValue(formatted);
   };
 
+  const formatIncomeInput = (val) => {
+    const numericValue = val.replace(/\D/g, '');
+    if (!numericValue) return '';
+    const intValue = parseInt(numericValue, 10);
+    return (intValue / 100).toFixed(2);
+  };
+
+  const handleIncomeChange = (e) => {
+    const formatted = formatIncomeInput(e.target.value);
+    onChangeValue(formatted);
+  };
+
   const handlePhoneBlur = async (e) => {
     if (question.id === 'phone' && value) {
       const cleanPhone = value.replace(/\D/g, '');
@@ -122,10 +134,12 @@ export function FormScreen({
       case 'number':
         return (
           <input
-            type="number"
+            type="text"
+            inputMode="decimal"
             value={value || ''}
-            onChange={e => onChangeValue(e.target.value)}
+            onChange={question.id === 'income' ? handleIncomeChange : e => onChangeValue(e.target.value)}
             onKeyPress={handleKeyPress}
+            placeholder={question.id === 'income' ? 'Ex: 2.500,00' : ''}
             autoFocus
           />
         );
