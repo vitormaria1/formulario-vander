@@ -65,3 +65,7 @@ logs/
 *.tmp
 *.temp
 temp/
+
+# Wrangler
+wrangler.json*
+.wrangler/
