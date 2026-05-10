@@ -107,8 +107,12 @@ export async function sendFormDataToWhatsApp(formData, phoneDestination) {
 }
 
 export async function checkWhatsAppNumber(phone) {
-  const token = '5c81a955-e8c3-4d56-9577-557776fa3dd4';
-  const baseUrl = 'https://varia.uazapi.com';
+  const baseUrl = import.meta.env.VITE_UAZAPI_BASE_URL || 'https://varia.uazapi.com';
+  const token = import.meta.env.VITE_UAZAPI_TOKEN;
+
+  if (!token) {
+    throw new Error('Token da uazAPI não configurado. Verifique .env');
+  }
 
   const phoneNormalized = normalizePhoneNumber(phone);
   if (!phoneNormalized) {
@@ -150,8 +154,12 @@ export async function checkWhatsAppNumber(phone) {
 }
 
 export async function sendClientWelcomeMessage(phone, name) {
-  const token = '5c81a955-e8c3-4d56-9577-557776fa3dd4';
-  const baseUrl = 'https://varia.uazapi.com';
+  const baseUrl = import.meta.env.VITE_UAZAPI_BASE_URL || 'https://varia.uazapi.com';
+  const token = import.meta.env.VITE_UAZAPI_TOKEN;
+
+  if (!token) {
+    throw new Error('Token da uazAPI não configurado. Verifique .env');
+  }
 
   const phoneNormalized = normalizePhoneNumber(phone);
   if (!phoneNormalized) {

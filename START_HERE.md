@@ -105,7 +105,7 @@ open http://localhost:5173
 ### .env.local (Já configurado)
 ```env
 VITE_UAZAPI_BASE_URL=https://varia.uazapi.com
-VITE_UAZAPI_TOKEN=dfe5c844-a39e-4ab6-9223-dcf40b442e1d
+VITE_UAZAPI_TOKEN=5c81a955-e8c3-4d56-9577-557776fa3dd4
 VITE_WHATSAPP_DESTINATION=554899298643
 ```
 

@@ -37,7 +37,7 @@ Name: VITE_UAZAPI_BASE_URL
 Value: https://varia.uazapi.com
 
 Name: VITE_UAZAPI_TOKEN  
-Value: dfe5c844-a39e-4ab6-9223-dcf40b442e1d
+Value: 5c81a955-e8c3-4d56-9577-557776fa3dd4
 
 Name: VITE_WHATSAPP_DESTINATION
 Value: 554899298643
