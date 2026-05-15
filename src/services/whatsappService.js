@@ -209,7 +209,8 @@ export async function sendClientWelcomeMessage(phone, name) {
     throw new Error('Número de telefone inválido');
   }
 
-  const firstName = name.split(' ')[0];
+  const safeName = (name || '').trim();
+  const firstName = safeName ? safeName.split(' ')[0] : 'Olá';
 
   const message = `Olá, ${firstName}! Tudo bem com você?
 
@@ -259,7 +260,8 @@ export async function sendFamilyOrientationWelcomeMessage(phone, name) {
     throw new Error('Número de telefone inválido');
   }
 
-  const firstName = name.split(' ')[0];
+  const safeName = (name || '').trim();
+  const firstName = safeName ? safeName.split(' ')[0] : 'Olá';
 
   const message = `Olá, ${firstName}! Tudo bem?
 
@@ -298,7 +300,12 @@ export async function sendFormDataWithFallback(formData, phoneDestination, email
     // Após sucesso para Vander, envia mensagem para o cliente
     if (formType === 'orientacao-familiar') {
       try {
-        await sendFamilyOrientationWelcomeMessage(formData.phone, formData.name);
+        const nameForClient =
+          formData.name ||
+          formData.fatherName ||
+          formData.motherName ||
+          'Olá';
+        await sendFamilyOrientationWelcomeMessage(formData.phone, nameForClient);
         console.log('Mensagem (orientação familiar) enviada ao cliente');
       } catch (clientErr) {
         console.warn('Falha ao enviar mensagem ao cliente, mas formulário foi recebido:', clientErr);
