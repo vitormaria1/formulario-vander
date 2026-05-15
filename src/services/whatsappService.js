@@ -14,54 +14,66 @@ function normalizePhoneNumber(phone) {
   return digits;
 }
 
-function formatFormMessage(formData) {
+function getFormTitle(formType) {
+  if (formType === 'orientacao-familiar') return '📋 RESPOSTAS ORIENTAÇÃO FAMILIAR';
+  return '📋 RESPOSTAS PRÉ-SESSÃO';
+}
+
+function formatFormMessage(formData, formType) {
   const formatValue = (value) => {
     if (!value) return '[Não respondido]';
     return String(value).trim();
   };
 
   const lines = [
-    '📋 RESPOSTAS PRÉ-SESSÃO',
+    getFormTitle(formType),
     '',
     `E-mail: ${formatValue(formData.email)}`,
     `Nome: ${formatValue(formData.name)}`,
     `Telefone: ${formatValue(formData.phone)}`,
   ];
 
-  if (formData.age) lines.push(`Idade: ${formatValue(formData.age)}`);
-  if (formData.birthDate) lines.push(`Data de nascimento: ${formatValue(formData.birthDate)}`);
-  if (formData.address) lines.push(`Endereço: ${formatValue(formData.address)}`);
-  if (formData.religion) lines.push(`Religião: ${formatValue(formData.religion)}`);
-  if (formData.maritalStatus) lines.push(`Estado civil: ${formatValue(formData.maritalStatus)}`);
-  if (formData.profession) lines.push(`Profissão: ${formatValue(formData.profession)}`);
-  if (formData.income) lines.push(`Renda: ${formatValue(formData.income)}`);
-
-  lines.push('');
-
-  if (formData.therapyHistory) {
-    lines.push(`Histórico de terapia: ${formatValue(formData.therapyHistory)}`);
-  }
-
-  if (formData.diagnosis) {
-    lines.push(`Diagnósticos: ${formatValue(formData.diagnosis)}`);
-  }
-
-  if (formData.medication) {
-    lines.push(`Medicações: ${formatValue(formData.medication)}`);
-  }
-
-  if (formData.routine) {
-    lines.push(`Rotina: ${formatValue(formData.routine)}`);
-  }
-
-  lines.push('');
-  lines.push(`Motivo da terapia: ${formatValue(formData.reason)}`);
-  lines.push('');
-  lines.push(`Objetivos (3 meses): ${formatValue(formData.goals)}`);
-
-  if (formData.additional) {
+  if (formType === 'orientacao-familiar') {
     lines.push('');
-    lines.push(`Observações: ${formatValue(formData.additional)}`);
+    if (formData.familyOrientationContext) {
+      lines.push(`Contexto: ${formatValue(formData.familyOrientationContext)}`);
+    }
+  } else {
+    if (formData.age) lines.push(`Idade: ${formatValue(formData.age)}`);
+    if (formData.birthDate) lines.push(`Data de nascimento: ${formatValue(formData.birthDate)}`);
+    if (formData.address) lines.push(`Endereço: ${formatValue(formData.address)}`);
+    if (formData.religion) lines.push(`Religião: ${formatValue(formData.religion)}`);
+    if (formData.maritalStatus) lines.push(`Estado civil: ${formatValue(formData.maritalStatus)}`);
+    if (formData.profession) lines.push(`Profissão: ${formatValue(formData.profession)}`);
+    if (formData.income) lines.push(`Renda: ${formatValue(formData.income)}`);
+
+    lines.push('');
+
+    if (formData.therapyHistory) {
+      lines.push(`Histórico de terapia: ${formatValue(formData.therapyHistory)}`);
+    }
+
+    if (formData.diagnosis) {
+      lines.push(`Diagnósticos: ${formatValue(formData.diagnosis)}`);
+    }
+
+    if (formData.medication) {
+      lines.push(`Medicações: ${formatValue(formData.medication)}`);
+    }
+
+    if (formData.routine) {
+      lines.push(`Rotina: ${formatValue(formData.routine)}`);
+    }
+
+    lines.push('');
+    lines.push(`Motivo da terapia: ${formatValue(formData.reason)}`);
+    lines.push('');
+    lines.push(`Objetivos (3 meses): ${formatValue(formData.goals)}`);
+
+    if (formData.additional) {
+      lines.push('');
+      lines.push(`Observações: ${formatValue(formData.additional)}`);
+    }
   }
 
   lines.push('');
@@ -71,7 +83,7 @@ function formatFormMessage(formData) {
   return lines.join('\n');
 }
 
-export async function sendFormDataToWhatsApp(formData, phoneDestination) {
+export async function sendFormDataToWhatsApp(formData, phoneDestination, formType) {
   const baseUrl = import.meta.env.VITE_UAZAPI_BASE_URL || 'https://varia.uazapi.com';
   const token = import.meta.env.VITE_UAZAPI_TOKEN;
 
@@ -84,7 +96,7 @@ export async function sendFormDataToWhatsApp(formData, phoneDestination) {
     throw new Error('Número de telefone inválido');
   }
 
-  const message = formatFormMessage(formData);
+  const message = formatFormMessage(formData, formType);
 
   const response = await fetch(`${baseUrl}/send/text`, {
     method: 'POST',
@@ -203,20 +215,70 @@ Para alinharmos com clareza, qual é a sua disponibilidade para fazermos a pré-
   }
 }
 
-export async function sendFormDataWithFallback(formData, phoneDestination, emailDestination) {
+export async function sendFamilyOrientationWelcomeMessage(phone, name) {
+  const baseUrl = import.meta.env.VITE_UAZAPI_BASE_URL || 'https://varia.uazapi.com';
+  const token = import.meta.env.VITE_UAZAPI_TOKEN;
+
+  if (!token) {
+    throw new Error('Token da uazAPI não configurado. Verifique .env');
+  }
+
+  const phoneNormalized = normalizePhoneNumber(phone);
+  if (!phoneNormalized) {
+    throw new Error('Número de telefone inválido');
+  }
+
+  const firstName = name.split(' ')[0];
+
+  const message = `Olá, ${firstName}! Tudo bem?
+
+Recebi suas respostas do formulário de *Orientação Familiar*.
+
+Em breve eu retorno com os próximos passos.`;
+
+  const response = await fetch(`${baseUrl}/send/text`, {
+    method: 'POST',
+    headers: {
+      'token': token,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      number: phoneNormalized,
+      text: message,
+    }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.text();
+    throw new Error(`Erro ao enviar: ${response.status} - ${errorData}`);
+  }
+
+  return response.json();
+}
+
+export async function sendFormDataWithFallback(formData, phoneDestination, emailDestination, formType) {
   const { saveFormToQueue } = await import('./queueService.js');
 
   try {
     // Tenta WhatsApp para Vander primeiro
-    const whatsappResult = await sendFormDataToWhatsApp(formData, phoneDestination);
+    const whatsappResult = await sendFormDataToWhatsApp(formData, phoneDestination, formType);
     console.log('WhatsApp enviado para Vander:', whatsappResult);
 
-    // Após sucesso para Vander, envia mensagem de boas-vindas para o cliente
-    try {
-      await sendClientWelcomeMessage(formData.phone, formData.name);
-      console.log('Mensagem de boas-vindas enviada ao cliente');
-    } catch (clientErr) {
-      console.warn('Falha ao enviar mensagem ao cliente, mas formulário foi recebido:', clientErr);
+    // Após sucesso para Vander, envia mensagem para o cliente
+    if (formType === 'orientacao-familiar') {
+      try {
+        await sendFamilyOrientationWelcomeMessage(formData.phone, formData.name);
+        console.log('Mensagem (orientação familiar) enviada ao cliente');
+      } catch (clientErr) {
+        console.warn('Falha ao enviar mensagem ao cliente, mas formulário foi recebido:', clientErr);
+      }
+    } else {
+      try {
+        await sendClientWelcomeMessage(formData.phone, formData.name);
+        console.log('Mensagem de boas-vindas enviada ao cliente');
+      } catch (clientErr) {
+        console.warn('Falha ao enviar mensagem ao cliente, mas formulário foi recebido:', clientErr);
+      }
     }
 
     return {
@@ -229,7 +291,7 @@ export async function sendFormDataWithFallback(formData, phoneDestination, email
 
     try {
       // Fallback: salva na fila do Supabase para processamento posterior
-      const queueResult = await saveFormToQueue(formData, phoneDestination);
+      const queueResult = await saveFormToQueue(formData, phoneDestination, formType);
       console.log('Formulário salvo na fila (fallback):', queueResult);
       return {
         success: true,

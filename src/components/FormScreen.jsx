@@ -208,7 +208,7 @@ export function FormScreen({
         </div>
 
         <div className="button-group">
-          {questionNumber > 1 && (
+          {(questionNumber > 1 || questionNumber === 1) && (
             <button onClick={onPrev} disabled={isLoading} className="btn-secondary">
               ← VOLTAR
             </button>

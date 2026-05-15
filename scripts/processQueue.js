@@ -18,54 +18,66 @@ function normalizePhoneNumber(phone) {
   return digits;
 }
 
-function formatFormMessage(formData) {
+function getFormTitle(formType) {
+  if (formType === 'orientacao-familiar') return '📋 RESPOSTAS ORIENTAÇÃO FAMILIAR';
+  return '📋 RESPOSTAS PRÉ-SESSÃO';
+}
+
+function formatFormMessage(formData, formType) {
   const formatValue = (value) => {
     if (!value) return '[Não respondido]';
     return String(value).trim();
   };
 
   const lines = [
-    '📋 RESPOSTAS PRÉ-SESSÃO',
+    getFormTitle(formType),
     '',
     `E-mail: ${formatValue(formData.email)}`,
     `Nome: ${formatValue(formData.name)}`,
     `Telefone: ${formatValue(formData.phone)}`,
   ];
 
-  if (formData.age) lines.push(`Idade: ${formatValue(formData.age)}`);
-  if (formData.birthDate) lines.push(`Data de nascimento: ${formatValue(formData.birthDate)}`);
-  if (formData.address) lines.push(`Endereço: ${formatValue(formData.address)}`);
-  if (formData.religion) lines.push(`Religião: ${formatValue(formData.religion)}`);
-  if (formData.maritalStatus) lines.push(`Estado civil: ${formatValue(formData.maritalStatus)}`);
-  if (formData.profession) lines.push(`Profissão: ${formatValue(formData.profession)}`);
-  if (formData.income) lines.push(`Renda: ${formatValue(formData.income)}`);
-
-  lines.push('');
-
-  if (formData.therapyHistory) {
-    lines.push(`Histórico de terapia: ${formatValue(formData.therapyHistory)}`);
-  }
-
-  if (formData.diagnosis) {
-    lines.push(`Diagnósticos: ${formatValue(formData.diagnosis)}`);
-  }
-
-  if (formData.medication) {
-    lines.push(`Medicações: ${formatValue(formData.medication)}`);
-  }
-
-  if (formData.routine) {
-    lines.push(`Rotina: ${formatValue(formData.routine)}`);
-  }
-
-  lines.push('');
-  lines.push(`Motivo da terapia: ${formatValue(formData.reason)}`);
-  lines.push('');
-  lines.push(`Objetivos (3 meses): ${formatValue(formData.goals)}`);
-
-  if (formData.additional) {
+  if (formType === 'orientacao-familiar') {
     lines.push('');
-    lines.push(`Observações: ${formatValue(formData.additional)}`);
+    if (formData.familyOrientationContext) {
+      lines.push(`Contexto: ${formatValue(formData.familyOrientationContext)}`);
+    }
+  } else {
+    if (formData.age) lines.push(`Idade: ${formatValue(formData.age)}`);
+    if (formData.birthDate) lines.push(`Data de nascimento: ${formatValue(formData.birthDate)}`);
+    if (formData.address) lines.push(`Endereço: ${formatValue(formData.address)}`);
+    if (formData.religion) lines.push(`Religião: ${formatValue(formData.religion)}`);
+    if (formData.maritalStatus) lines.push(`Estado civil: ${formatValue(formData.maritalStatus)}`);
+    if (formData.profession) lines.push(`Profissão: ${formatValue(formData.profession)}`);
+    if (formData.income) lines.push(`Renda: ${formatValue(formData.income)}`);
+
+    lines.push('');
+
+    if (formData.therapyHistory) {
+      lines.push(`Histórico de terapia: ${formatValue(formData.therapyHistory)}`);
+    }
+
+    if (formData.diagnosis) {
+      lines.push(`Diagnósticos: ${formatValue(formData.diagnosis)}`);
+    }
+
+    if (formData.medication) {
+      lines.push(`Medicações: ${formatValue(formData.medication)}`);
+    }
+
+    if (formData.routine) {
+      lines.push(`Rotina: ${formatValue(formData.routine)}`);
+    }
+
+    lines.push('');
+    lines.push(`Motivo da terapia: ${formatValue(formData.reason)}`);
+    lines.push('');
+    lines.push(`Objetivos (3 meses): ${formatValue(formData.goals)}`);
+
+    if (formData.additional) {
+      lines.push('');
+      lines.push(`Observações: ${formatValue(formData.additional)}`);
+    }
   }
 
   lines.push('');
@@ -75,9 +87,9 @@ function formatFormMessage(formData) {
   return lines.join('\n');
 }
 
-async function sendViaWhatsApp(formData, phoneDestination) {
+async function sendViaWhatsApp(formData, phoneDestination, formType) {
   const phoneNormalized = normalizePhoneNumber(phoneDestination);
-  const message = formatFormMessage(formData);
+  const message = formatFormMessage(formData, formType);
 
   const response = await fetch(`${UAZAPI_BASE_URL}/send/text`, {
     method: 'POST',
@@ -162,7 +174,7 @@ async function processQueue() {
       try {
         console.log(`[Queue Processor] Processando item ${item.id}...`);
 
-        await sendViaWhatsApp(item.form_data, item.phone_destination);
+        await sendViaWhatsApp(item.form_data, item.phone_destination, item.form_type || null);
 
         await updateQueueItem(item.id, 'processed', item.attempts + 1);
         console.log(`[Queue Processor] ✅ Item ${item.id} processado com sucesso`);

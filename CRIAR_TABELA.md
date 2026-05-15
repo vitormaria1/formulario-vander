@@ -43,7 +43,7 @@ Deve aparecer "submission_queue" na lista
 ## ✅ SQL Criado
 
 O script cria:
-- ✅ Tabela `submission_queue` com 9 colunas
+- ✅ Tabela `submission_queue` com 10 colunas (inclui `form_type`)
 - ✅ Índices para performance (status, created_at)
 - ✅ Row Level Security (RLS) ativado
 - ✅ Política 1: Clientes podem INSERT

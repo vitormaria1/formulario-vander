@@ -1,27 +1,79 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useFormState } from './hooks/useFormState';
 import { sendFormDataWithFallback } from './services/whatsappService';
-import { CoverScreen } from './components/CoverScreen';
+import { LandingScreen } from './components/LandingScreen';
 import { FormScreen } from './components/FormScreen';
 import { ConfirmationScreen } from './components/ConfirmationScreen';
+import { FORM_TYPES, isValidFormType } from './forms/formTypes';
+import { preSessionQuestions } from './forms/questions/preSessionQuestions';
+import { familyOrientationQuestions } from './forms/questions/familyOrientationQuestions';
 import './styles/global.css';
 
+function getFormTypeFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const form = params.get('form');
+  return isValidFormType(form) ? form : null;
+}
+
+function setFormTypeInUrl(formType) {
+  const url = new URL(window.location.href);
+  if (!formType) {
+    url.searchParams.delete('form');
+  } else {
+    url.searchParams.set('form', formType);
+  }
+  window.history.pushState({}, '', url);
+}
+
 function App() {
-  const form = useFormState();
+  const [view, setView] = useState('landing'); // landing | form | confirmation
+  const [activeFormType, setActiveFormType] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
-  const handleStart = () => {
-    form.setCurrentScreen(1);
+  const questions = useMemo(() => {
+    if (activeFormType === FORM_TYPES.ORIENTACAO_FAMILIAR) return familyOrientationQuestions;
+    return preSessionQuestions;
+  }, [activeFormType]);
+
+  const form = useFormState(questions);
+
+  useEffect(() => {
+    const syncFromUrl = () => {
+      const formType = getFormTypeFromUrl();
+      if (formType) {
+        setActiveFormType(formType);
+        setView('form');
+      } else {
+        setActiveFormType(null);
+        setView('landing');
+      }
+    };
+
+    syncFromUrl();
+    const onPopState = () => syncFromUrl();
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, []);
+
+  const handleSelectForm = (formType) => {
+    setErrorMessage('');
+    setSuccessMessage('');
+    setActiveFormType(formType);
+    setView('form');
+    setFormTypeInUrl(formType);
+  };
+
+  const handleBackToLanding = () => {
+    setErrorMessage('');
+    setSuccessMessage('');
+    setActiveFormType(null);
+    setView('landing');
+    setFormTypeInUrl(null);
   };
 
   const handleNext = async () => {
-    if (form.currentScreen === 0) {
-      handleStart();
-      return;
-    }
-
-    const isLastQuestion = form.currentScreen === form.totalQuestions;
+    const isLastQuestion = form.currentIndex === form.totalQuestions - 1;
 
     if (isLastQuestion) {
       await handleSubmit();
@@ -29,6 +81,14 @@ function App() {
     }
 
     form.goNext();
+  };
+
+  const handlePrev = () => {
+    if (form.currentIndex === 0) {
+      handleBackToLanding();
+      return;
+    }
+    form.goPrev();
   };
 
   const handleSubmit = async () => {
@@ -56,14 +116,14 @@ function App() {
       const emailDestination = import.meta.env.VITE_EMAIL_DESTINATION || 'formulario@vandermaria.com.br';
 
       // Tenta WhatsApp, fallback para email se falhar
-      const result = await sendFormDataWithFallback(form.formData, phoneDestination, emailDestination);
+      const result = await sendFormDataWithFallback(form.formData, phoneDestination, emailDestination, activeFormType);
 
       // Cliente sempre vê sucesso (se chegou aqui, funcionou algo)
       setSuccessMessage('Respostas recebidas com sucesso!');
       console.log(`Formulário enviado via ${result.method}`);
 
       setTimeout(() => {
-        form.setCurrentScreen(form.totalQuestions + 2);
+        setView('confirmation');
       }, 500);
     } catch (error) {
       // Erro interno - NUNCA mostrar ao cliente
@@ -73,7 +133,7 @@ function App() {
       // Por enquanto, fingir que funcionou para não assustar cliente
       setSuccessMessage('Respostas recebidas com sucesso!');
       setTimeout(() => {
-        form.setCurrentScreen(form.totalQuestions + 2);
+        setView('confirmation');
       }, 500);
     } finally {
       form.setIsLoading(false);
@@ -81,7 +141,7 @@ function App() {
   };
 
   const currentQuestion = form.getCurrentQuestion?.();
-  const isFormScreen = form.currentScreen > 0 && form.currentScreen <= form.totalQuestions;
+  const isFormScreen = view === 'form' && activeFormType && currentQuestion;
 
   return (
     <div className="app">
@@ -111,26 +171,30 @@ function App() {
         </div>
       )}
 
-      {form.currentScreen === 0 && (
-        <CoverScreen onStart={handleStart} />
+      {view === 'landing' && (
+        <LandingScreen
+          presentation={null}
+          onSelectPreSession={() => handleSelectForm(FORM_TYPES.PRE_SESSAO)}
+          onSelectFamilyOrientation={() => handleSelectForm(FORM_TYPES.ORIENTACAO_FAMILIAR)}
+        />
       )}
 
-      {isFormScreen && currentQuestion && (
+      {isFormScreen && (
         <FormScreen
-          questionNumber={form.currentScreen}
+          questionNumber={form.currentIndex + 1}
           totalQuestions={form.totalQuestions}
           question={currentQuestion}
           value={form.formData[currentQuestion.id]}
           onChangeValue={(value) => form.updateField(currentQuestion.id, value)}
           onNext={handleNext}
-          onPrev={form.goPrev}
+          onPrev={handlePrev}
           isLoading={form.isLoading}
           error={form.errors?.[currentQuestion.id]}
-          isLastQuestion={form.currentScreen === form.totalQuestions}
+          isLastQuestion={form.currentIndex === form.totalQuestions - 1}
         />
       )}
 
-      {form.currentScreen === form.totalQuestions + 2 && (
+      {view === 'confirmation' && (
         <ConfirmationScreen />
       )}
 

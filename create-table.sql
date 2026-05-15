@@ -4,6 +4,7 @@
 CREATE TABLE submission_queue (
   id BIGSERIAL PRIMARY KEY,
   form_data JSONB NOT NULL,
+  form_type TEXT,
   phone_destination TEXT NOT NULL,
   status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'processed', 'failed')),
   attempts INTEGER DEFAULT 0,
