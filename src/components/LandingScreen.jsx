@@ -20,7 +20,7 @@ export function LandingScreen({ presentation, onSelectPreSession, onSelectFamily
 
           <div className="cta-group">
             <button onClick={onSelectPreSession} className="btn-primary">
-              PRÉ-SESSÃO →
+              TERAPIA DE CASAL →
             </button>
             <button onClick={onSelectFamilyOrientation} className="btn-secondary">
               ORIENTAÇÃO FAMILIAR →
