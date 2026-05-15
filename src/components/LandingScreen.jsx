@@ -1,5 +1,4 @@
-const PHOTO_URL =
-  'https://jfltbluknvirjoizhavf.supabase.co/storage/v1/object/public/vander/WhatsApp%20Image%202026-04-17%20at%2022.28.38.jpeg';
+import presentationPhoto from '../assets/presentation-photo.png';
 
 export function LandingScreen({ presentation, onSelectPreSession, onSelectFamilyOrientation }) {
   return (
@@ -30,7 +29,7 @@ export function LandingScreen({ presentation, onSelectPreSession, onSelectFamily
         </div>
 
         <div className="photo-section">
-          <img src={PHOTO_URL} alt="Vander" className="photo" />
+          <img src={presentationPhoto} alt="Foto do profissional" className="photo" />
         </div>
       </div>
 
@@ -143,4 +142,3 @@ export function LandingScreen({ presentation, onSelectPreSession, onSelectFamily
     </div>
   );
 }
-

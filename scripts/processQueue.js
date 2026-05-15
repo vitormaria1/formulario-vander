@@ -33,16 +33,47 @@ function formatFormMessage(formData, formType) {
     getFormTitle(formType),
     '',
     `E-mail: ${formatValue(formData.email)}`,
-    `Nome: ${formatValue(formData.name)}`,
     `Telefone: ${formatValue(formData.phone)}`,
   ];
 
   if (formType === 'orientacao-familiar') {
+    lines.splice(3, 0, `Pai: ${formatValue(formData.fatherName)}`);
+    lines.splice(4, 0, `Mãe: ${formatValue(formData.motherName)}`);
+
     lines.push('');
-    if (formData.familyOrientationContext) {
-      lines.push(`Contexto: ${formatValue(formData.familyOrientationContext)}`);
-    }
+    lines.push('👤 IDENTIFICAÇÃO');
+    lines.push(`Idade do pai: ${formatValue(formData.fatherAge)}`);
+    lines.push(`Idade da mãe: ${formatValue(formData.motherAge)}`);
+    lines.push(`Tempo de casamento (anos): ${formatValue(formData.marriageYears)}`);
+    lines.push(`Cidade/estado: ${formatValue(formData.cityState)}`);
+
+    lines.push('');
+    lines.push('👧👦 SOBRE OS FILHOS');
+    lines.push(`Filhos (qtd/idades): ${formatValue(formData.childrenCountAges)}`);
+    lines.push(`Diagnóstico/necessidade/tratamento: ${formatValue(formData.childrenSpecialNeeds)}`);
+
+    lines.push('');
+    lines.push('🏠 REALIDADE DA FAMÍLIA');
+    lines.push(`Renda familiar (exata): ${formatValue(formData.familyIncome)}`);
+    lines.push(`Trabalho/rotina com crianças: ${formatValue(formData.workOutsideChildcare)}`);
+    lines.push(`Rede de apoio: ${formatValue(formData.supportNetwork)}`);
+
+    lines.push('');
+    lines.push('🎯 O QUE MOTIVOU A BUSCA');
+    lines.push(`Desafios atuais: ${formatValue(formData.currentChallenges)}`);
+    lines.push(`Há quanto tempo: ${formatValue(formData.challengeDuration)}`);
+    lines.push(`Alinhamento do casal: ${formatValue(formData.coupleAlignment)}`);
+    lines.push(`Ajuda anterior: ${formatValue(formData.previousHelp)}`);
+
+    lines.push('');
+    lines.push('⛪ FÉ E COMUNIDADE');
+    lines.push(`Igreja/comunidade cristã: ${formatValue(formData.churchCommunity)}`);
+
+    lines.push('');
+    lines.push('✅ EXPECTATIVA');
+    lines.push(`O que esperam alcançar: ${formatValue(formData.expectedOutcome)}`);
   } else {
+    lines.splice(3, 0, `Nome: ${formatValue(formData.name)}`);
     if (formData.age) lines.push(`Idade: ${formatValue(formData.age)}`);
     if (formData.birthDate) lines.push(`Data de nascimento: ${formatValue(formData.birthDate)}`);
     if (formData.address) lines.push(`Endereço: ${formatValue(formData.address)}`);
