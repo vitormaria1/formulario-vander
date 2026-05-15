@@ -7,6 +7,7 @@ import { ConfirmationScreen } from './components/ConfirmationScreen';
 import { FORM_TYPES, isValidFormType } from './forms/formTypes';
 import { preSessionQuestions } from './forms/questions/preSessionQuestions';
 import { familyOrientationQuestions } from './forms/questions/familyOrientationQuestions';
+import { PresentationContent } from './content/presentation.jsx';
 import './styles/global.css';
 
 function getFormTypeFromUrl() {
@@ -173,7 +174,7 @@ function App() {
 
       {view === 'landing' && (
         <LandingScreen
-          presentation={null}
+          presentation={<PresentationContent />}
           onSelectPreSession={() => handleSelectForm(FORM_TYPES.PRE_SESSAO)}
           onSelectFamilyOrientation={() => handleSelectForm(FORM_TYPES.ORIENTACAO_FAMILIAR)}
         />
