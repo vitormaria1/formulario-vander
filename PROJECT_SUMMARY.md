@@ -129,8 +129,8 @@ npm run build
 
 ### .env.local (NUNCA commitar)
 ```env
-VITE_UAZAPI_BASE_URL=https://varia.uazapi.com
-VITE_UAZAPI_TOKEN=5c81a955-e8c3-4d56-9577-557776fa3dd4
+VITE_UAZAPI_BASE_URL=https://rayani.uazapi.com
+VITE_UAZAPI_TOKEN=48f267c5-5f2c-4205-bdd6-462dcd1dde5e
 VITE_WHATSAPP_DESTINATION=554899298643
 ```
 
@@ -195,7 +195,7 @@ Formatar mensagem legível
          ↓
 Normalizar telefone: "48 99298-6643" → "554899298643"
          ↓
-POST https://varia.uazapi.com/send/text
+POST https://rayani.uazapi.com/send/text
 {
   "number": "554899298643",
   "text": "📋 RESPOSTAS PRÉ-SESSÃO\n\nEmail: ...\nNome: ..."

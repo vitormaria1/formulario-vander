@@ -5,7 +5,7 @@ import fetch from 'node-fetch';
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
-const UAZAPI_BASE_URL = process.env.VITE_UAZAPI_BASE_URL || 'https://varia.uazapi.com';
+const UAZAPI_BASE_URL = process.env.VITE_UAZAPI_BASE_URL || 'https://rayani.uazapi.com';
 const UAZAPI_TOKEN = process.env.VITE_UAZAPI_TOKEN;
 const MAX_ATTEMPTS = 5;
 const RETRY_DELAY_MS = 5000;

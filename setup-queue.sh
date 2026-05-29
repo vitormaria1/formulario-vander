@@ -120,7 +120,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
 const supabaseUrl = Deno.env.get("SUPABASE_URL")!
 const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
 const uazapiToken = Deno.env.get("VITE_UAZAPI_TOKEN")!
-const uazapiBaseUrl = Deno.env.get("VITE_UAZAPI_BASE_URL") || "https://varia.uazapi.com"
+const uazapiBaseUrl = Deno.env.get("VITE_UAZAPI_BASE_URL") || "https://rayani.uazapi.com"
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
@@ -310,8 +310,8 @@ if [ -f ".env.local" ]; then
 else
   echo -e "${RED}⚠ .env.local não encontrado, criando novo...${NC}"
   cat > .env.local << EOF
-VITE_UAZAPI_BASE_URL=https://varia.uazapi.com
-VITE_UAZAPI_TOKEN=5c81a955-e8c3-4d56-9577-557776fa3dd4
+VITE_UAZAPI_BASE_URL=https://rayani.uazapi.com
+VITE_UAZAPI_TOKEN=48f267c5-5f2c-4205-bdd6-462dcd1dde5e
 VITE_WHATSAPP_DESTINATION=554899298643
 VITE_SUPABASE_URL=${SUPABASE_URL}
 VITE_SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
@@ -337,8 +337,8 @@ VITE_SUPABASE_URL=${SUPABASE_URL}
 VITE_SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
 
 # uazAPI
-VITE_UAZAPI_BASE_URL=https://varia.uazapi.com
-VITE_UAZAPI_TOKEN=5c81a955-e8c3-4d56-9577-557776fa3dd4
+VITE_UAZAPI_BASE_URL=https://rayani.uazapi.com
+VITE_UAZAPI_TOKEN=48f267c5-5f2c-4205-bdd6-462dcd1dde5e
 VITE_WHATSAPP_DESTINATION=554899298643
 VITE_EMAIL_DESTINATION=formulario@vandermaria.com.br
 

@@ -82,8 +82,8 @@ Edge Functions → Settings → Environment Variables
 
 Adicionar:
 
-VITE_UAZAPI_TOKEN = 5c81a955-e8c3-4d56-9577-557776fa3dd4
-VITE_UAZAPI_BASE_URL = https://varia.uazapi.com
+VITE_UAZAPI_TOKEN = 48f267c5-5f2c-4205-bdd6-462dcd1dde5e
+VITE_UAZAPI_BASE_URL = https://rayani.uazapi.com
 ```
 
 **✅ Function deployada!**

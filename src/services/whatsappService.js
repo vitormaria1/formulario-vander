@@ -115,7 +115,7 @@ function formatFormMessage(formData, formType) {
 }
 
 export async function sendFormDataToWhatsApp(formData, phoneDestination, formType) {
-  const baseUrl = import.meta.env.VITE_UAZAPI_BASE_URL || 'https://varia.uazapi.com';
+  const baseUrl = import.meta.env.VITE_UAZAPI_BASE_URL || 'https://rayani.uazapi.com';
   const token = import.meta.env.VITE_UAZAPI_TOKEN;
 
   if (!token) {
@@ -150,7 +150,7 @@ export async function sendFormDataToWhatsApp(formData, phoneDestination, formTyp
 }
 
 export async function checkWhatsAppNumber(phone) {
-  const baseUrl = import.meta.env.VITE_UAZAPI_BASE_URL || 'https://varia.uazapi.com';
+  const baseUrl = import.meta.env.VITE_UAZAPI_BASE_URL || 'https://rayani.uazapi.com';
   const token = import.meta.env.VITE_UAZAPI_TOKEN;
 
   if (!token) {
@@ -197,7 +197,7 @@ export async function checkWhatsAppNumber(phone) {
 }
 
 export async function sendClientWelcomeMessage(phone, name) {
-  const baseUrl = import.meta.env.VITE_UAZAPI_BASE_URL || 'https://varia.uazapi.com';
+  const baseUrl = import.meta.env.VITE_UAZAPI_BASE_URL || 'https://rayani.uazapi.com';
   const token = import.meta.env.VITE_UAZAPI_TOKEN;
 
   if (!token) {
@@ -248,7 +248,7 @@ Para alinharmos com clareza, qual é a sua disponibilidade para fazermos a pré-
 }
 
 export async function sendFamilyOrientationWelcomeMessage(phone, name) {
-  const baseUrl = import.meta.env.VITE_UAZAPI_BASE_URL || 'https://varia.uazapi.com';
+  const baseUrl = import.meta.env.VITE_UAZAPI_BASE_URL || 'https://rayani.uazapi.com';
   const token = import.meta.env.VITE_UAZAPI_TOKEN;
 
   if (!token) {

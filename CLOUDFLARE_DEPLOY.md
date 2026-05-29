@@ -34,10 +34,10 @@ Settings → Environment variables → Production
 Adicionar 3 variáveis:
 
 Name: VITE_UAZAPI_BASE_URL
-Value: https://varia.uazapi.com
+Value: https://rayani.uazapi.com
 
 Name: VITE_UAZAPI_TOKEN  
-Value: 5c81a955-e8c3-4d56-9577-557776fa3dd4
+Value: 48f267c5-5f2c-4205-bdd6-462dcd1dde5e
 
 Name: VITE_WHATSAPP_DESTINATION
 Value: 554899298643
