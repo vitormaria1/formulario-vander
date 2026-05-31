@@ -49,7 +49,7 @@
 **Localmente (.env.local):**
 ```env
 VITE_UAZAPI_BASE_URL=https://rayani.uazapi.com
-VITE_UAZAPI_TOKEN=48f267c5-5f2c-4205-bdd6-462dcd1dde5e
+VITE_UAZAPI_TOKEN=26997bb5-1294-4107-9dcd-993b4a2a5999
 VITE_WHATSAPP_DESTINATION=554899298643
 ```
 

@@ -37,7 +37,7 @@ Name: VITE_UAZAPI_BASE_URL
 Value: https://rayani.uazapi.com
 
 Name: VITE_UAZAPI_TOKEN  
-Value: 48f267c5-5f2c-4205-bdd6-462dcd1dde5e
+Value: 26997bb5-1294-4107-9dcd-993b4a2a5999
 
 Name: VITE_WHATSAPP_DESTINATION
 Value: 554899298643
