@@ -67,5 +67,5 @@ logs/
 temp/
 
 # Wrangler
-wrangler.json*
+wrangler.json
 .wrangler/

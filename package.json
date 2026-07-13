@@ -16,5 +16,9 @@
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "vite": "^8.0.8"
+  },
+  "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.44.0",
+    "wrangler": "^4.110.0"
   }
 }
