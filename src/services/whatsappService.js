@@ -195,19 +195,64 @@ Para alinharmos com clareza, qual é a sua disponibilidade para fazermos a pré-
   }
 }
 
-export async function sendFormDataWithFallback(formData, phoneDestination, emailDestination) {
+export async function sendFormDataWithFallback(
+  formData,
+  phoneDestination,
+  emailDestination,
+  onDiagnostic
+) {
   const { saveFormToQueue } = await import('./queueService.js');
+
+  const emit = (event) => {
+    if (typeof onDiagnostic === 'function') onDiagnostic(event);
+  };
 
   try {
     // Tenta WhatsApp para Vander primeiro
+    emit({
+      level: 'info',
+      stage: 'whatsapp.request',
+      message: 'Enviando formulário para a UAZAPI',
+      details: {
+        phoneDestinationNormalized: normalizePhoneNumber(phoneDestination),
+        baseUrl: import.meta.env.VITE_UAZAPI_BASE_URL || 'https://varia.uazapi.com',
+      },
+    });
+
     const whatsappResult = await sendFormDataToWhatsApp(formData, phoneDestination);
+    emit({
+      level: 'success',
+      stage: 'whatsapp.response',
+      message: 'UAZAPI respondeu com sucesso',
+      details: {
+        keys: Object.keys(whatsappResult || {}),
+      },
+    });
     console.log('WhatsApp enviado para Vander:', whatsappResult);
 
     // Após sucesso para Vander, envia mensagem de boas-vindas para o cliente
     try {
+      emit({
+        level: 'info',
+        stage: 'client_welcome.request',
+        message: 'Enviando mensagem de boas-vindas ao cliente',
+      });
       await sendClientWelcomeMessage(formData.phone, formData.name);
+      emit({
+        level: 'success',
+        stage: 'client_welcome.response',
+        message: 'Mensagem de boas-vindas enviada ao cliente',
+      });
       console.log('Mensagem de boas-vindas enviada ao cliente');
     } catch (clientErr) {
+      emit({
+        level: 'warning',
+        stage: 'client_welcome.error',
+        message: 'Falha ao enviar mensagem de boas-vindas',
+        details: {
+          error: clientErr instanceof Error ? clientErr.message : String(clientErr),
+        },
+      });
       console.warn('Falha ao enviar mensagem ao cliente, mas formulário foi recebido:', clientErr);
     }
 
@@ -217,11 +262,32 @@ export async function sendFormDataWithFallback(formData, phoneDestination, email
       data: whatsappResult,
     };
   } catch (whatsappError) {
+    emit({
+      level: 'error',
+      stage: 'whatsapp.error',
+      message: 'Falha ao enviar formulário para a UAZAPI',
+      details: {
+        error: whatsappError instanceof Error ? whatsappError.message : String(whatsappError),
+      },
+    });
     console.error('WhatsApp falhou, salvando na fila de processamento:', whatsappError);
 
     try {
       // Fallback: salva na fila do Supabase para processamento posterior
+      emit({
+        level: 'info',
+        stage: 'queue.request',
+        message: 'Salvando formulário na fila do Supabase',
+      });
       const queueResult = await saveFormToQueue(formData, phoneDestination);
+      emit({
+        level: 'success',
+        stage: 'queue.response',
+        message: 'Formulário salvo na fila do Supabase',
+        details: {
+          queued: true,
+        },
+      });
       console.log('Formulário salvo na fila (fallback):', queueResult);
       return {
         success: true,
@@ -230,6 +296,14 @@ export async function sendFormDataWithFallback(formData, phoneDestination, email
         queued: true,
       };
     } catch (queueError) {
+      emit({
+        level: 'error',
+        stage: 'queue.error',
+        message: 'Falha ao salvar formulário na fila do Supabase',
+        details: {
+          error: queueError instanceof Error ? queueError.message : String(queueError),
+        },
+      });
       console.error('Erro ao salvar na fila:', queueError);
       throw new Error('Todos os métodos de envio falharam');
     }
